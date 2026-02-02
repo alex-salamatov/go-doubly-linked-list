@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/alex-salamatov/doubly_linked_list/pkg/datastruct"
+)
 
 func main() {
-	fmt.Println("Initial Dobly Linke List program")
+	dll := datastruct.MakeDoublyLinkedList()
+	fmt.Printf("Doubly Linked List length = %d", dll.Len())
 }
