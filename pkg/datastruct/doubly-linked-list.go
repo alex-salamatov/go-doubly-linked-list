@@ -2,6 +2,8 @@ package datastruct
 
 import (
 	"errors"
+	"fmt"
+	"math/rand/v2"
 )
 
 type Dnode struct {
@@ -156,4 +158,87 @@ func (dll *DoublyLinkedList) InsertAfter(i, value int) error {
 	node.next.prev = node
 	dll.len++
 	return nil
+}
+
+func (dll *DoublyLinkedList) Print() {
+	fmt.Printf("DList: Len = %d, Elements: ", dll.Len())
+	for i := 0; i < dll.Len(); i++ {
+		val, _ := dll.At(i)
+		fmt.Printf("%d ", val)
+	}
+	fmt.Printf("\n")
+}
+
+func (dll *DoublyLinkedList) QuickSort() {
+	if dll.Len() <= 1 {
+		return
+	}
+
+	pi := rand.IntN(dll.Len()) //random index of element which we take as pivot = pivot index
+	pivot, _ := dll.At(pi)
+
+	//	dll.Print()
+	//	fmt.Printf(" original pivot index = %d, pivot value = %d ", pi, pivot)
+
+	var spi int //sorted pivot index
+
+	node := dll.getNodeAt(0)
+
+	for i := 0; i < dll.Len(); i++ {
+		if node.value < pivot {
+			spi++
+		}
+		node = node.next
+	}
+
+	if pi != spi {
+		dll.swap(pi, spi) //pivot is placed to its place
+	}
+
+	//	fmt.Printf("  sortedPivotIndex = %d, N LeftElements = %d N RightElements = %d \n", spi, spi, dll.Len()-spi-1)
+
+	left := MakeDoublyLinkedList()
+	right := MakeDoublyLinkedList()
+	pivotNode := dll.getNodeAt(spi)
+
+	if spi > 0 {
+		left.first = dll.first     //elements on the left of pivot
+		left.last = pivotNode.prev //elements on the left of pivot
+		left.len = spi
+	}
+
+	if spi < dll.Len()-1 {
+		right.first = pivotNode.next //elements on the right of pivot
+		right.last = dll.last
+		right.len = dll.Len() - spi - 1
+	}
+
+	if left.Len() > 0 && right.Len() > 0 {
+		//start moving elements from left to right parts if needed
+		for i, jr := 0, 0; i < spi; i++ {
+
+			lelem, _ := left.At(i)
+
+			if lelem < pivot {
+				continue //left[i] can stay in its position on the left of pivot
+			}
+
+			for k := jr; k < right.Len(); k++ {
+
+				relem, _ := right.At(k)
+				if relem < pivot {
+					dll.swap(i, k+spi+1)
+					jr = k + 1 //index of element of the right from pivot slice, starting from which there still might be elements to be moved to the left of pivot
+					break
+				}
+			}
+		}
+	}
+
+	//	fmt.Printf("Output: Pivot = %d\n", pivot)
+	//left.Print()
+	//right.Print()
+
+	left.QuickSort()  //apply quick sort to the left  from pivot partition
+	right.QuickSort() //apply quick sort to the right from pivot partition
 }
