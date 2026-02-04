@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	dll := datastruct.MakeDoublyLinkedList()
+	dll := datastruct.NewDoublyLinkedList()
 	dll.Append(6)
 	dll.Append(5)
 	dll.Append(4)
@@ -18,13 +18,13 @@ func main() {
 	dll.Append(0)
 
 	pos0 := 0
-	elem0, _ := dll.At(pos0)
+	elem0 := dll.At(pos0)
 
 	pos1 := 1
-	elem1, _ := dll.At(pos1)
+	elem1 := dll.At(pos1)
 
 	pos2 := 2
-	elem2, _ := dll.At(pos2)
+	elem2 := dll.At(pos2)
 
 	fmt.Printf("Doubly Linked List length = %d, value at position %d is %d\n", dll.Len(), pos0, elem0)
 	fmt.Printf("Doubly Linked List length = %d, value at position %d is %d\n", dll.Len(), pos1, elem1)
@@ -35,10 +35,10 @@ func main() {
 	dll.RemoveAt(0)
 
 	posPL := dll.Len() - 2
-	elemPL, _ := dll.At(posPL)
+	elemPL := dll.At(posPL)
 
 	posL := dll.Len() - 1
-	elemL, _ := dll.At(posL)
+	elemL := dll.At(posL)
 
 	fmt.Printf("Doubly Linked List length = %d, value at position %d is %d\n", dll.Len(), posPL, elemPL)
 	fmt.Printf("Doubly Linked List length = %d, value at position %d is %d\n", dll.Len(), posL, elemL)
@@ -54,7 +54,7 @@ func main() {
 	dll.QuickSort()
 	dll.Print()
 
-	dll_sort := datastruct.MakeDoublyLinkedList()
+	dll_sort := datastruct.NewDoublyLinkedList()
 	list_len := 30
 	for i := 0; i < list_len; i++ {
 		val := rand.IntN(200)

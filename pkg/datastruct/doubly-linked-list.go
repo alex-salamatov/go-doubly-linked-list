@@ -1,7 +1,6 @@
 package datastruct
 
 import (
-	"errors"
 	"fmt"
 	"math/rand/v2"
 )
@@ -18,11 +17,11 @@ type DoublyLinkedList struct {
 	last  *Dnode
 }
 
-func MakeDoublyLinkedList() *DoublyLinkedList {
+func NewDoublyLinkedList() *DoublyLinkedList {
 	return &DoublyLinkedList{0, nil, nil}
 }
 
-func MakeDnode(val int) *Dnode {
+func NewDnode(val int) *Dnode {
 	return &Dnode{val, nil, nil}
 }
 
@@ -58,9 +57,9 @@ func (dll *DoublyLinkedList) getNodeAt(pos int) *Dnode {
 	}
 }
 
-func (dll *DoublyLinkedList) swap(i, j int) error {
+func (dll *DoublyLinkedList) swap(i, j int) {
 	if !dll.IsValidIndex(i) || !dll.IsValidIndex(j) {
-		return errors.New("some index is out of range")
+		panic("some index is out of range")
 	}
 
 	ni := dll.getNodeAt(i)
@@ -69,8 +68,6 @@ func (dll *DoublyLinkedList) swap(i, j int) error {
 	tmp := ni.value
 	ni.value = nj.value
 	nj.value = tmp
-
-	return nil
 }
 
 func (dll *DoublyLinkedList) Len() int {
@@ -78,7 +75,7 @@ func (dll *DoublyLinkedList) Len() int {
 }
 
 func (dll *DoublyLinkedList) Append(val int) {
-	node := MakeDnode(val)
+	node := NewDnode(val)
 
 	if dll.Len() == 0 {
 		dll.first = node
@@ -92,55 +89,54 @@ func (dll *DoublyLinkedList) Append(val int) {
 	}
 }
 
-func (dll *DoublyLinkedList) At(i int) (int, error) {
+func (dll *DoublyLinkedList) At(i int) int {
 	if !dll.IsValidIndex(i) {
-		return 0, errors.New("index is out of range")
+		panic("index is out of range")
 	}
 
 	if dll.Len() == 0 {
-		return 0, errors.New("cannot return an element: the list is empty")
+		panic("cannot return an element: the list is empty")
 	}
 
-	return dll.getNodeAt(i).value, nil
+	return dll.getNodeAt(i).value
 }
 
-func (dll *DoublyLinkedList) RemoveAt(i int) error {
+func (dll *DoublyLinkedList) RemoveAt(i int) {
 	if !dll.IsValidIndex(i) {
-		return errors.New("index is out of range")
+		panic("index is out of range")
 	}
 
 	if i == 0 {
 		dll.first.next.prev = nil
 		dll.first = dll.first.next
 		dll.len--
-		return nil
+		return
 	}
 
 	if i == dll.Len()-1 {
 		dll.last.prev.next = nil
 		dll.last = dll.last.prev
 		dll.len--
-		return nil
+		return
 	}
 
 	node := dll.getNodeAt(i)
 	node.prev.next = node.next
 	node.next.prev = node.prev
 	dll.len--
-	return nil
 }
 
 // i == -1 means insert as front element
-func (dll *DoublyLinkedList) InsertAfter(i, value int) error {
+func (dll *DoublyLinkedList) InsertAfter(i, value int) {
 	if !dll.IsValidIndex(i) && i != -1 {
-		return errors.New("index is out of range")
+		panic("index is out of range")
 	}
 
-	node := MakeDnode(value)
+	node := NewDnode(value)
 
 	if (i == -1 && dll.Len() == 0) || (i == dll.Len()-1) {
 		dll.Append(value)
-		return nil
+		return
 	}
 
 	if i == -1 { //insert in front of list ...
@@ -148,7 +144,7 @@ func (dll *DoublyLinkedList) InsertAfter(i, value int) error {
 		node.next.prev = node
 		dll.first = node
 		dll.len++
-		return nil
+		return
 	}
 
 	afterNode := dll.getNodeAt(i)
@@ -157,13 +153,12 @@ func (dll *DoublyLinkedList) InsertAfter(i, value int) error {
 	node.prev = afterNode
 	node.next.prev = node
 	dll.len++
-	return nil
 }
 
 func (dll *DoublyLinkedList) Print() {
 	fmt.Printf("DList: Len = %d, Elements: ", dll.Len())
 	for i := 0; i < dll.Len(); i++ {
-		val, _ := dll.At(i)
+		val := dll.At(i)
 		fmt.Printf("%d ", val)
 	}
 	fmt.Printf("\n")
@@ -175,7 +170,7 @@ func (dll *DoublyLinkedList) QuickSort() {
 	}
 
 	pi := rand.IntN(dll.Len()) //random index of element which we take as pivot = pivot index
-	pivot, _ := dll.At(pi)
+	pivot := dll.At(pi)
 
 	//	dll.Print()
 	//	fmt.Printf(" original pivot index = %d, pivot value = %d ", pi, pivot)
@@ -197,8 +192,8 @@ func (dll *DoublyLinkedList) QuickSort() {
 
 	//	fmt.Printf("  sortedPivotIndex = %d, N LeftElements = %d N RightElements = %d \n", spi, spi, dll.Len()-spi-1)
 
-	left := MakeDoublyLinkedList()
-	right := MakeDoublyLinkedList()
+	left := NewDoublyLinkedList()
+	right := NewDoublyLinkedList()
 	pivotNode := dll.getNodeAt(spi)
 
 	if spi > 0 {
@@ -217,16 +212,13 @@ func (dll *DoublyLinkedList) QuickSort() {
 		//start moving elements from left to right parts if needed
 		for i, jr := 0, 0; i < spi; i++ {
 
-			lelem, _ := left.At(i)
-
-			if lelem < pivot {
+			if left.At(i) < pivot {
 				continue //left[i] can stay in its position on the left of pivot
 			}
 
 			for k := jr; k < right.Len(); k++ {
 
-				relem, _ := right.At(k)
-				if relem < pivot {
+				if right.At(k) < pivot {
 					dll.swap(i, k+spi+1)
 					jr = k + 1 //index of element of the right from pivot slice, starting from which there still might be elements to be moved to the left of pivot
 					break
