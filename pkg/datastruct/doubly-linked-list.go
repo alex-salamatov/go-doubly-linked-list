@@ -21,6 +21,14 @@ func NewDoublyLinkedList() *DoublyLinkedList {
 	return &DoublyLinkedList{0, nil, nil}
 }
 
+func NewDoublyLinkedListFromSlice(a *[]int) *DoublyLinkedList {
+	l := DoublyLinkedList{0, nil, nil}
+	for _, val := range *a {
+		l.Append(val)
+	}
+	return &l
+}
+
 func NewDnode(val int) *Dnode {
 	return &Dnode{val, nil, nil}
 }
@@ -233,4 +241,38 @@ func (dll *DoublyLinkedList) QuickSort() {
 
 	left.QuickSort()  //apply quick sort to the left  from pivot partition
 	right.QuickSort() //apply quick sort to the right from pivot partition
+}
+
+func (dll *DoublyLinkedList) isSameAs(a *[]int) bool {
+	if len(*a) == 0 && dll.Len() == 0 {
+		return true
+	}
+
+	if len(*a) != dll.Len() {
+		return false
+	}
+
+	node := dll.first
+
+	for _, val := range *a {
+		if val != node.value {
+			return false
+		}
+		node = node.next
+	}
+
+	return true
+}
+
+func (dll *DoublyLinkedList) GetSliceValues() *[]int {
+	a := make([]int, dll.Len())
+
+	node := dll.first
+
+	for i := range a {
+		a[i] = node.value
+		node = node.next
+	}
+
+	return &a
 }
