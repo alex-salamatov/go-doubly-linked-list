@@ -21,9 +21,9 @@ func NewDoublyLinkedList() *DoublyLinkedList {
 	return &DoublyLinkedList{0, nil, nil}
 }
 
-func NewDoublyLinkedListFromSlice(a *[]int) *DoublyLinkedList {
+func NewDoublyLinkedListFromSlice(a []int) *DoublyLinkedList {
 	l := DoublyLinkedList{0, nil, nil}
-	for _, val := range *a {
+	for _, val := range a {
 		l.Append(val)
 	}
 	return &l
@@ -115,8 +115,14 @@ func (dll *DoublyLinkedList) RemoveAt(i int) {
 	}
 
 	if i == 0 {
-		dll.first.next.prev = nil
-		dll.first = dll.first.next
+		if dll.Len() > 1 {
+			dll.first.next.prev = nil
+			dll.first = dll.first.next
+		} else {
+			dll.first = nil
+			dll.last = nil
+		}
+
 		dll.len--
 		return
 	}
@@ -163,7 +169,7 @@ func (dll *DoublyLinkedList) InsertAfter(i, value int) {
 	dll.len++
 }
 
-func (dll *DoublyLinkedList) Print() {
+func (dll *DoublyLinkedList) Print() { //not covered with unit test as it is mainly dedicated for debug purposes and should be excluded in real list implementation
 	fmt.Printf("DList: Len = %d, Elements: ", dll.Len())
 	for i := 0; i < dll.Len(); i++ {
 		val := dll.At(i)
@@ -243,18 +249,18 @@ func (dll *DoublyLinkedList) QuickSort() {
 	right.QuickSort() //apply quick sort to the right from pivot partition
 }
 
-func (dll *DoublyLinkedList) isSameAs(a *[]int) bool {
-	if len(*a) == 0 && dll.Len() == 0 {
+func (dll *DoublyLinkedList) isSameAs(a []int) bool {
+	if len(a) == 0 && dll.Len() == 0 {
 		return true
 	}
 
-	if len(*a) != dll.Len() {
+	if len(a) != dll.Len() {
 		return false
 	}
 
 	node := dll.first
 
-	for _, val := range *a {
+	for _, val := range a {
 		if val != node.value {
 			return false
 		}
@@ -264,7 +270,7 @@ func (dll *DoublyLinkedList) isSameAs(a *[]int) bool {
 	return true
 }
 
-func (dll *DoublyLinkedList) GetSliceValues() *[]int {
+func (dll *DoublyLinkedList) GetSliceValues() []int {
 	a := make([]int, dll.Len())
 
 	node := dll.first
@@ -274,5 +280,5 @@ func (dll *DoublyLinkedList) GetSliceValues() *[]int {
 		node = node.next
 	}
 
-	return &a
+	return a
 }

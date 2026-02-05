@@ -49,7 +49,6 @@ func TestIsValidIndex(t *testing.T) {
 		t.Errorf("TestIsValidIndex: expected false for list with two elements, got true")
 	}
 }
-
 func TestQuickSort(t *testing.T) {
 	l0 := NewDoublyLinkedList()
 	l0.QuickSort()
@@ -61,15 +60,87 @@ func TestQuickSort(t *testing.T) {
 	l0.QuickSort()
 
 	a0_result := []int{0, 1}
-	if !l0.isSameAs(&a0_result) {
-		t.Errorf("TestQuickSort: expected list %v, got %v", a0_result, *l0.GetSliceValues())
+	if !l0.isSameAs(a0_result) {
+		t.Errorf("TestQuickSort: expected list %v, got %v", a0_result, l0.GetSliceValues())
 	}
 
 	a1_input := []int{-56, -66, 134, 99, 153, 50, -16, 88, 60, -151, 91, -136, 6, 160, 140, -110, 33, 159, -168, 93, 132, -187, 96, 19, 34, 120, 96, -170, -70, 72}
 	a1_result := []int{-187, -170, -168, -151, -136, -110, -70, -66, -56, -16, 6, 19, 33, 34, 50, 60, 72, 88, 91, 93, 96, 96, 99, 120, 132, 134, 140, 153, 159, 160}
-	l1 := NewDoublyLinkedListFromSlice(&a1_input)
+	l1 := NewDoublyLinkedListFromSlice(a1_input)
 	l1.QuickSort()
-	if !l1.isSameAs(&a1_result) {
-		t.Errorf("TestQuickSort: expected\n list %v\n, got %v", a1_result, *l1.GetSliceValues())
+	if !l1.isSameAs(a1_result) {
+		t.Errorf("TestQuickSort: expected\n list %v\n, got %v", a1_result, l1.GetSliceValues())
+	}
+}
+
+func TestRemoveAt(t *testing.T) {
+	l0 := NewDoublyLinkedList()
+	l0.Append(10)
+	l0.RemoveAt(0)
+
+	if l0.Len() != 0 {
+		t.Errorf("TestRemoveAt: expected list length 0, got %d", l0.Len())
+	}
+
+	a1_input := []int{0, 1, 2, 3, 4, 5}
+	l1 := NewDoublyLinkedListFromSlice(a1_input)
+	l1.RemoveAt(0)
+	l1.RemoveAt(l1.Len() - 1)
+	l1.RemoveAt(2)
+	a1_result := []int{1, 2, 4}
+
+	if !l1.isSameAs(a1_result) {
+		t.Errorf("TestRemoveAt: expected list %v, got %v", a1_result, l1.GetSliceValues())
+	}
+
+	l1.RemoveAt(1)
+	l1.RemoveAt(1)
+	l1.RemoveAt(0)
+
+	if l1.Len() > 0 {
+		t.Errorf("TestRemoveAt: expected list length = 0, got %d", l1.Len())
+	}
+}
+
+func TestInsertAfter(t *testing.T) {
+	l0 := NewDoublyLinkedList()
+	l0.InsertAfter(-1, 10)
+
+	if l0.Len() != 1 {
+		t.Errorf("TestRemoveAt: expected list length 1, got %d", l0.Len())
+	}
+
+	l0.InsertAfter(0, 15)
+	l0.InsertAfter(1, 25)
+	l0.InsertAfter(1, 20)
+	l0.InsertAfter(l0.Len()-1, 30)
+	l0.InsertAfter(-1, 5)
+
+	a0_result := []int{5, 10, 15, 20, 25, 30}
+	if !l0.isSameAs(a0_result) {
+		t.Errorf("TestInsertAfter: expected list %v, got %v", a0_result, l0.GetSliceValues())
+	}
+}
+
+func TestGetSliceValues(t *testing.T) {
+	l0 := NewDoublyLinkedList()
+	vs := l0.GetSliceValues()
+
+	if len(vs) != 0 {
+		t.Errorf("TestGetSliceValues: expected values amount 0, got %d", len(vs))
+	}
+
+	a1_input := []int{0, 1, 2, 3, 4, 5}
+	l1 := NewDoublyLinkedListFromSlice(a1_input)
+	l1_values := l1.GetSliceValues()
+
+	if len(a1_input) != len(l1_values) {
+		t.Errorf("TestITestGetSliceValues: expected values length %d, got %d", len(a1_input), len(l1_values))
+	}
+
+	for i, v := range a1_input {
+		if v != l1_values[i] {
+			t.Errorf("TestGetSliceValues: expected values %v, got %v", a1_input, l1_values)
+		}
 	}
 }
